@@ -67,7 +67,7 @@ public class Hotel {
       }//end catch
    }//end Hotel
 
-   // Method to calculate euclidean distance between two latitude, longitude pairs. 
+   // Method to calculate euclidean distance between two latitude, longitude pairs 
    public double calculateDistance (double lat1, double long1, double lat2, double long2){
       double t1 = (lat1 - lat2) * (lat1 - lat2);
       double t2 = (long1 - long2) * (long1 - long2);
