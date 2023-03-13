@@ -400,8 +400,30 @@ public class Hotel {
 
 // Rest of the functions definition go in here
 
-   public static void viewHotels(Hotel esql) {}
-   public static void viewRooms(Hotel esql) {}
+   public static void viewHotels(Hotel esql) {
+   	//try{
+	//	System.out.print("\tEnter Latitude: ");
+	//	double Latitude = in.readLine();
+	//	System.out.print("\tEnter Longitude: ");
+	//	double Longitude = in.readLine();
+//
+//		double ans = calculateDistance(Latitude, Longitude, );
+//		String query = String.format("SELECT hotelName FROM Hotel WHERE userID = '%s' AND password = '%s'", userID, password);
+//	}
+   }
+   public static void viewRooms(Hotel esql) {
+  	 try{
+                System.out.print("\tEnter Hotel ID: ");
+                int HotelID = in.nextInt();
+                System.out.print("\tEnter Date: ");
+                String date = in.nextInt();
+
+                String query = String.format("SELECT RoomNumber, PricePerDay FROM Rooms WHERE hotelID = '%s' AND dateEstablished = '%s'", HotelID, date);
+        } catch(Exception e){
+         	System.err.println (e.getMessage ());
+      }
+
+   }
    public static void bookRooms(Hotel esql) {}
    public static void viewRecentBookingsfromCustomer(Hotel esql) {}
    public static void updateRoomInfo(Hotel esql) {}
