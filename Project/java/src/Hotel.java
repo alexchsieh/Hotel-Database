@@ -413,13 +413,14 @@ public class Hotel {
    }
    public static void viewRooms(Hotel esql) {
   	 try{
-                System.out.print("\tEnter Hotel ID: ");
-                int HotelID = in.nextInt();
-                System.out.print("\tEnter Date: ");
-                String date = in.nextInt();
+               //  System.out.print("\tEnter Hotel ID: ");
+               //  int HotelID = in.nextInt();
+               //  System.out.print("\tEnter Date: ");
+               //  String date = in.nextInt();
 
-                String query = String.format("SELECT RoomNumber, PricePerDay FROM Rooms WHERE hotelID = '%s' AND dateEstablished = '%s'", HotelID, date);
-        } catch(Exception e){
+               //  String query = String.format("SELECT RoomNumber, PricePerDay FROM Rooms WHERE hotelID = '%s' AND dateEstablished = '%s'", HotelID, date);
+        
+               } catch(Exception e){
          	System.err.println (e.getMessage ());
       }
 
