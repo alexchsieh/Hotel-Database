@@ -423,7 +423,6 @@ public class Hotel {
         } catch(Exception e){
          	System.err.println (e.getMessage ());
       }
-
    }
    public static void bookRooms(Hotel esql) {}
    public static void viewRecentBookingsfromCustomer(Hotel esql) {}
