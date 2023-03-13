@@ -401,15 +401,31 @@ public class Hotel {
 // Rest of the functions definition go in here
 
    public static void viewHotels(Hotel esql) {
-   	//try{
-	//	System.out.print("\tEnter Latitude: ");
-	//	double Latitude = in.readLine();
-	//	System.out.print("\tEnter Longitude: ");
-	//	double Longitude = in.readLine();
-//
-//		double ans = calculateDistance(Latitude, Longitude, );
-//		String query = String.format("SELECT hotelName FROM Hotel WHERE userID = '%s' AND password = '%s'", userID, password);
-//	}
+      try{
+         // System.out.print("\tEnter your longitude and latitude to find hotels within 30 units of you");
+         System.out.print("\tLongitude: ");
+         Double user_longitude = Double.parseDouble(in.readLine());
+         System.out.print("\tLatitude: ");
+         Double user_latitude = Double.parseDouble(in.readLine());
+         String query = "SELECT hotelName, latitude, longitude FROM Hotel";
+         List<List<String>> results = esql.executeQueryAndReturnResult(query);
+         // calculateDistance()
+         for(int i = 0; i < results.size(); i++){
+            String hotelName = results.get(i).get(0);
+            double hotelLatitude = Double.parseDouble(results.get(i).get(1));
+            double hotelLongitude = Double.parseDouble(results.get(i).get(2));
+            if(esql.calculateDistance(user_latitude, user_longitude, hotelLatitude, hotelLongitude) < 30){
+               System.out.print(hotelName + "\n");
+            }
+
+         }
+
+         System.out.print("\n");
+      }
+      catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+
    }
    public static void viewRooms(Hotel esql) {
   	 try{
