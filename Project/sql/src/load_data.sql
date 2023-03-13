@@ -1,7 +1,7 @@
 COPY Users
 FROM '/extra/CS166/Project/data/users.csv' 
 WITH DELIMITER ',' CSV HEADER;
-ALTER SEQUENCE users_userID_seq RESTART 101; 
+ALTER SEQUENCE users_userID_seq RESTART 101;
 
 COPY Hotel
 FROM '/extra/CS166/Project/data/hotels.csv' 
@@ -18,7 +18,7 @@ WITH DELIMITER ',' CSV HEADER;
 COPY RoomBookings
 FROM '/extra/CS166/Project/data/bookings.csv' 
 WITH DELIMITER ',' CSV HEADER;
-ALTER SEQUENCE RoomBookings_bookingID_seq RESTART 501; 
+ALTER SEQUENCE RoomBookings_bookingID_seq RESTART 501;
 
 COPY RoomRepairs
 FROM '/extra/CS166/Project/data/roomRepairs.csv' 
