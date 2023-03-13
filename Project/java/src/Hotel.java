@@ -409,7 +409,7 @@ public class Hotel {
          Double user_latitude = Double.parseDouble(in.readLine());
          String query = "SELECT hotelName, latitude, longitude FROM Hotel";
          List<List<String>> results = esql.executeQueryAndReturnResult(query);
-         // calculateDistance()
+         System.out.print("Hotels near you... \n");
          for(int i = 0; i < results.size(); i++){
             String hotelName = results.get(i).get(0);
             double hotelLatitude = Double.parseDouble(results.get(i).get(1));
