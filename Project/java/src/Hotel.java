@@ -301,7 +301,7 @@ public class Hotel {
                    case 2: viewRooms(esql); break;
                    case 3: bookRooms(esql, authorisedUser); break;
                    case 4: viewRecentBookingsfromCustomer(esql); break;
-                   case 5: updateRoomInfo(esql); break;
+                   case 5: updateRoomInfo(esql, authorisedUser); break;
                    case 6: viewRecentUpdates(esql); break;
                    case 7: viewBookingHistoryofHotel(esql); break;
                    case 8: viewRegularCustomers(esql); break;
@@ -457,7 +457,7 @@ public class Hotel {
             String roomPrice = results.get(0).get(0);
             String addBookingQuery = String.format("INSERT INTO RoomBookings (customerID, hotelID, roomNumber, bookingDate) VALUES (%s, %s, %s, %s)", auth_user, hotelID, roomNumber, bookingDate);
             esql.executeUpdate(addBookingQuery);
-            System.out.println("The room " + roomNumber + " has been booked and you've been charged " + roomPrice);
+            System.out.println("The room " + roomNumber + " has been booked and you've been charged " + roomPrice + " bells");
 
          }
          else{
@@ -469,7 +469,45 @@ public class Hotel {
       }
    }
    public static void viewRecentBookingsfromCustomer(Hotel esql) {}
-   public static void updateRoomInfo(Hotel esql) {}
+   public static void updateRoomInfo(Hotel esql, String auth_user) {
+      try{
+         System.out.print("\tEnter Hotel ID: ");
+         String hotelID = in.readLine();
+         System.out.print("\tRoom number: ");
+         String roomNumber = in.readLine();
+         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE managerUserID=" + auth_user;
+         List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
+         String roomUpdateLogQuery = String.format("INSERT INTO RoomUpdatesLog (managerID, hotelID, roomNumber, updatedOn) VALUES (%s, %s, %s, CURRENT_TIMESTAMP)", auth_user, hotelID, roomNumber);
+         if(result.size() > 0){
+            System.out.println("\tWould you like to update the 'price' or the 'image url', enter something besides the options to exit: ");
+            String updateOption = in.readLine();
+            if(updateOption.equals("price")){
+               System.out.println("\tNew price for room: ");
+               String newPrice = in.readLine();
+               String updatePriceQuery = String.format("UPDATE Rooms SET price=%s WHERE hotelID=%s AND roomNumber=%s", newPrice, hotelID, roomNumber);
+               esql.executeUpdate(updatePriceQuery);
+               esql.executeUpdate(roomUpdateLogQuery);
+               System.out.println("\tUpdated price");
+            }
+            else if(updateOption.equals("image url")){
+               System.out.println("\tNew image url for room: ");
+               String newImageUrl = in.readLine();
+               String updateImageUrlQuery = String.format("UPDATE Rooms SET price=%s WHERE hotelID=%s AND roomNumber=%s", newImageUrl, hotelID, roomNumber);
+               esql.executeUpdate(updateImageUrlQuery);
+               esql.executeUpdate(roomUpdateLogQuery);
+               System.out.println("\tUpdated Image Url");
+            }
+            else{
+               System.out.print("\tyour input: " + updateOption + " ?");
+            }
+         } else{
+            System.out.println("You are not a manager for that hotel so you may not update any room information!");
+         }
+
+      } catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }
    public static void viewRecentUpdates(Hotel esql) {}
    public static void viewBookingHistoryofHotel(Hotel esql) {}
    public static void viewRegularCustomers(Hotel esql) {}
