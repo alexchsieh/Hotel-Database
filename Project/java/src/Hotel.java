@@ -299,7 +299,7 @@ public class Hotel {
                 switch (readChoice()){
                    case 1: viewHotels(esql); break;
                    case 2: viewRooms(esql); break;
-                   case 3: bookRooms(esql); break;
+                   case 3: bookRooms(esql, authorisedUser); break;
                    case 4: viewRecentBookingsfromCustomer(esql); break;
                    case 5: updateRoomInfo(esql); break;
                    case 6: viewRecentUpdates(esql); break;
@@ -440,7 +440,31 @@ public class Hotel {
          	System.err.println (e.getMessage ());
       }
    }
-   public static void bookRooms(Hotel esql) {}
+   public static void bookRooms(Hotel esql, String auth_user) {
+      try{
+         System.out.print("\tEnter Hotel ID: ");
+         String hotelID = in.readLine();
+         System.out.print("\tRoom number: ");
+         String roomNumber = in.readLine();
+         System.out.print("\tEnter Date: ");
+         String bookingDate = String.format("'%s'", in.readLine());
+         String query = "SELECT R.price FROM Rooms R WHERE R.roomNumber=" + roomNumber + " AND R.hotelID= " + hotelID + " AND NOT EXISTS (SELECT * FROM RoomBookings RB WHERE RB.hotelID=" + hotelID + " AND R.hotelID=RB.hotelID AND R.roomNumber=RB.roomNumber AND RB.roomNumber="+ roomNumber +" AND bookingDate=" + bookingDate + ")";
+         List<List<String>> results = esql.executeQueryAndReturnResult(query);
+         if(results.size() > 0){
+            String roomPrice = results.get(0).get(0);
+            String addBookingQuery = String.format("INSERT INTO RoomBookings (customerID, hotelID, roomNumber, bookingDate) VALUES (%s, %s, %s, %s)", auth_user, hotelID, roomNumber, bookingDate);
+            esql.executeUpdate(addBookingQuery);
+            System.out.println("The room " + roomNumber + " has been booked and you've been charged " + roomPrice);
+
+         }
+         else{
+            System.out.println("Sorry that room is currently unavailable for that booking date");
+         }
+      }
+      catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }
    public static void viewRecentBookingsfromCustomer(Hotel esql) {}
    public static void updateRoomInfo(Hotel esql) {}
    public static void viewRecentUpdates(Hotel esql) {}
