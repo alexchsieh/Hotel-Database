@@ -305,8 +305,8 @@ public class Hotel {
                    case 6: viewRecentUpdates(esql); break;
                    case 7: viewBookingHistoryofHotel(esql); break;
                    case 8: viewRegularCustomers(esql); break;
-                   case 9: placeRoomRepairRequests(esql); break;
-                   case 10: viewRoomRepairHistory(esql); break;
+                   case 9: placeRoomRepairRequests(esql, authorisedUser); break;
+                   case 10: viewRoomRepairHistory(esql, authorisedUser); break;
                    case 20: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -511,8 +511,31 @@ public class Hotel {
    public static void viewRecentUpdates(Hotel esql) {}
    public static void viewBookingHistoryofHotel(Hotel esql) {}
    public static void viewRegularCustomers(Hotel esql) {}
-   public static void placeRoomRepairRequests(Hotel esql) {}
-   public static void viewRoomRepairHistory(Hotel esql) {}
+   public static void placeRoomRepairRequests(Hotel esql, String auth_user) {
+      try{
+         System.out.print("\tEnter Hotel ID: ");
+         String hotelID = in.readLine();
+         System.out.print("\tRoom number: ");
+         String roomNumber = in.readLine();
+         System.out.print("\tCompany ID of maintenance company: ");
+         String companyID = in.readLine();
+         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE managerUserID=" + auth_user;
+         List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
+         if(result.size() > 0){
+            String addRoomRepairQuery = String.format("INSERT INTO RoomRepairs (companyID, hotelID, roomNumber, repairDate) VALUES (%s, %s, %s, CURRENT_DATE)", companyID, hotelID, roomNumber);
+            esql.executeUpdate(addRoomRepairQuery);
+            int newRepairID = esql.getNewUserID("SELECT last_value FROM roomRepairs_repairID_seq");
+            String addRoomRepairRequestsQuery = String.format("INSERT INTO RoomRepairRequests (managerID, repairID) VALUES (%s, %s)", auth_user, newRepairID);
+            esql.executeUpdate(addRoomRepairRequestsQuery);
+         } else{
+            System.out.println("You are not a manager for that hotel so you may not order a repair request!");
+         }
+      }
+      catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }
+   public static void viewRoomRepairHistory(Hotel esql, String auth_user) {}
 
 }//end Hotel
 
