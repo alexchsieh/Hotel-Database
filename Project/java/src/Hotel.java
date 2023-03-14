@@ -433,10 +433,20 @@ public class Hotel {
          System.out.print("\tEnter Hotel ID: ");
          int HotelID = Integer.parseInt(in.readLine());
          System.out.print("\tEnter Date: ");
-         String date = in.readLine();
+         String date = "'";
+         date += in.readLine();
+         date += "'";
 
-         String query = String.format("SELECT roomNumber, price FROM Rooms WHERE hotelID = '%s'", HotelID, date);
-         esql.executeQueryAndPrintResult(query);
+         String query = "SELECT R.roomNumber, R.price FROM Rooms R WHERE R.hotelID= " + HotelID + " AND NOT EXISTS (SELECT * FROM RoomBookings RB WHERE RB.hotelID=" + HotelID + " AND bookingDate=" + date + ")";
+         List<List<String>> results = esql.executeQueryAndReturnResult(query);
+         for(int i = 0; i < results.size(); i++){
+            String roomNumber = results.get(i).get(0);
+            String roomPrice = results.get(i).get(1);
+            System.out.println("The room " + roomNumber + " is available for " + roomPrice + " bells");
+         }
+         if(results.size()==0){
+            System.out.println("Sorry there are no rooms currently available for that booking date");
+         }
          System.out.print("\n");
       } 
       catch(Exception e){
