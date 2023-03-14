@@ -437,7 +437,7 @@ public class Hotel {
          date += in.readLine();
          date += "'";
 
-         String query = "SELECT R.roomNumber, R.price FROM Rooms R WHERE R.hotelID= " + HotelID + " AND NOT EXISTS (SELECT * FROM RoomBookings RB WHERE RB.hotelID=" + HotelID + " AND bookingDate=" + date + ")";
+         String query = "SELECT R.roomNumber, R.price FROM Rooms R WHERE R.hotelID= " + HotelID + " AND roomNumber NOT IN (SELECT roomNumber FROM RoomBookings RB WHERE RB.hotelID=" + HotelID + " AND bookingDate=" + date + ")";
          List<List<String>> results = esql.executeQueryAndReturnResult(query);
          for(int i = 0; i < results.size(); i++){
             String roomNumber = results.get(i).get(0);
@@ -478,7 +478,9 @@ public class Hotel {
          System.err.println (e.getMessage ());
       }
    }
-   public static void viewRecentBookingsfromCustomer(Hotel esql) {}
+   public static void viewRecentBookingsfromCustomer(Hotel esql) {
+      //selecting customerID from bookings, order by booking dates, and display top 5?
+   }
    public static void updateRoomInfo(Hotel esql, String auth_user) {
       try{
          System.out.print("\tEnter Hotel ID: ");
