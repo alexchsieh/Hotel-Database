@@ -475,7 +475,7 @@ public class Hotel {
          String hotelID = in.readLine();
          System.out.print("\tRoom number: ");
          String roomNumber = in.readLine();
-         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE managerUserID=" + auth_user;
+         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          String roomUpdateLogQuery = String.format("INSERT INTO RoomUpdatesLog (managerID, hotelID, roomNumber, updatedOn) VALUES (%s, %s, %s, CURRENT_TIMESTAMP)", auth_user, hotelID, roomNumber);
          if(result.size() > 0){
@@ -519,7 +519,7 @@ public class Hotel {
          String roomNumber = in.readLine();
          System.out.print("\tCompany ID of maintenance company: ");
          String companyID = in.readLine();
-         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE managerUserID=" + auth_user;
+         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          if(result.size() > 0){
             String addRoomRepairQuery = String.format("INSERT INTO RoomRepairs (companyID, hotelID, roomNumber, repairDate) VALUES (%s, %s, %s, CURRENT_DATE)", companyID, hotelID, roomNumber);
@@ -527,15 +527,31 @@ public class Hotel {
             int newRepairID = esql.getNewUserID("SELECT last_value FROM roomRepairs_repairID_seq");
             String addRoomRepairRequestsQuery = String.format("INSERT INTO RoomRepairRequests (managerID, repairID) VALUES (%s, %s)", auth_user, newRepairID);
             esql.executeUpdate(addRoomRepairRequestsQuery);
+            System.out.println("The repair order has been placed.");
          } else{
             System.out.println("You are not a manager for that hotel so you may not order a repair request!");
          }
       }
       catch(Exception e){
-         System.err.println (e.getMessage ());
+         System.err.println(e.getMessage ());
       }
    }
-   public static void viewRoomRepairHistory(Hotel esql, String auth_user) {}
+   public static void viewRoomRepairHistory(Hotel esql, String auth_user) {
+      try{
+         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE managerUserID=" + auth_user;
+         List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
+         if(result.size() > 0){
+            System.out.println("Manager Room Repair Request History");
+            String roomRequestsHistoryQuery = String.format("SELECT companyID, hotelID, roomNumber, repairDate FROM RoomRepairs WHERE hotelID IN (SELECT hotelID FROM Hotel WHERE managerUserID=%s)", auth_user);
+            esql.executeQueryAndPrintResult(roomRequestsHistoryQuery);
+         }
+         else{
+            System.out.println("You are not a manager for any hotels");
+         }
+      } catch(Exception e){
+         System.err.println(e.getMessage ());
+      }
+   }
 
 }//end Hotel
 
