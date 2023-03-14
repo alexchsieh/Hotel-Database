@@ -348,11 +348,13 @@ public class Hotel {
          try { // read the integer, parse it and break.
             input = Integer.parseInt(in.readLine());
             break;
-         }catch (Exception e) {
+         }
+         catch (Exception e) {
             System.out.println("Your input is invalid!");
             continue;
          }//end try
-      }while (true);
+      }  
+      while (true);
       return input;
    }//end readChoice
 
@@ -370,7 +372,8 @@ public class Hotel {
          esql.executeUpdate(query);
          System.out.println ("User successfully created with userID = " + esql.getNewUserID("SELECT last_value FROM users_userID_seq"));
          
-      }catch(Exception e){
+      }
+      catch(Exception e){
          System.err.println (e.getMessage ());
       }
    }//end CreateUser
@@ -392,14 +395,14 @@ public class Hotel {
          if (userNum > 0)
             return userID;
          return null;
-      }catch(Exception e){
+      }
+      catch(Exception e){
          System.err.println (e.getMessage ());
          return null;
       }
    }//end
 
 // Rest of the functions definition go in here
-
    public static void viewHotels(Hotel esql) {
       try{
          // System.out.print("\tEnter your longitude and latitude to find hotels within 30 units of you");
@@ -417,27 +420,27 @@ public class Hotel {
             if(esql.calculateDistance(user_latitude, user_longitude, hotelLatitude, hotelLongitude) < 30){
                System.out.print(hotelName + "\n");
             }
-
          }
-
          System.out.print("\n");
       }
       catch(Exception e){
-         System.err.println (e.getMessage ());
+         System.err.println(e.getMessage());
       }
-
    }
-   public static void viewRooms(Hotel esql) {
-  	 try{
-                System.out.print("\tEnter Hotel ID: ");
-                int HotelID = Integer.parseInt(in.readLine());
-                System.out.print("\tEnter Date: ");
-                String date = in.readLine();
 
-                String query = String.format("SELECT roomNumber, price FROM Rooms WHERE hotelID = '%s' AND dateEstablished = '%s'", HotelID, date);
-                esql.executeQuery(query);
-        } catch(Exception e){
-         	System.err.println (e.getMessage ());
+   public static void viewRooms(Hotel esql) {
+  	   try{
+         System.out.print("\tEnter Hotel ID: ");
+         int HotelID = Integer.parseInt(in.readLine());
+         System.out.print("\tEnter Date: ");
+         String date = in.readLine();
+
+         String query = String.format("SELECT roomNumber, price FROM Rooms WHERE hotelID = '%s'", HotelID, date);
+         esql.executeQueryAndPrintResult(query);
+         System.out.print("\n");
+      } 
+      catch(Exception e){
+         System.err.println(e.getMessage());
       }
    }
    public static void bookRooms(Hotel esql, String auth_user) {
