@@ -577,7 +577,7 @@ public class Hotel {
             String fiveRecentUpdatesQuery = String.format("SELECT hotelID, roomNumber FROM RoomUpdatesLog WHERE managerID=%s ORDER BY updatedOn DESC LIMIT 5", auth_user);
             esql.executeQueryAndPrintResult(fiveRecentUpdatesQuery);
          } else{
-            System.out.println("You are not a manager for that hotel so you may not update any room information!");
+            System.out.println("You are not a manager for any hotels!");
          }
       }
       catch(Exception e){
