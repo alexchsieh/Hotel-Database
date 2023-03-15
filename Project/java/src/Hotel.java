@@ -305,7 +305,7 @@ public class Hotel {
                    case 5: updateRoomInfo(esql, authorisedUser); break;
                    case 6: viewRecentUpdates(esql, authorisedUser); break;
                    case 7: viewBookingHistoryofHotel(esql, authorisedUser); break;
-                   case 8: viewRegularCustomers(esql); break;
+                   case 8: viewRegularCustomers(esql, authorisedUser); break;
                    case 9: placeRoomRepairRequests(esql, authorisedUser); break;
                    case 10: viewRoomRepairHistory(esql, authorisedUser); break;
                    case 20: usermenu = false; break;
@@ -592,33 +592,66 @@ public class Hotel {
    }
    public static void viewBookingHistoryofHotel(Hotel esql, String auth_user) {
       try{
-         System.out.println("Please enter the starting date of your range (M,D,YYYY): ");
-         String date1 = "'" + in.readLine() + "'";
-         System.out.println("Please enter the ending date of your range (M,D,YYYY): ");
-         String date2 = "'" + in.readLine() + "'";
-         String isManagerQuery = "SELECT RB.bookingID, U.name, RB.hotelID, RB.roomNumber, RB.bookingDate, H.managerUserID FROM RoomBookings RB, Users U, Hotel H WHERE managerUserID=" + auth_user + " AND H.hotelID = RB.hotelID AND RB.customerID = U.userID AND RB.bookingDate >= " + date1 + " AND RB.bookingDate <=" + date2;
-         List<List<String>> results = esql.executeQueryAndReturnResult(isManagerQuery);
-         for(int i = 0; i < results.size(); i++) {
-            String bookingID = results.get(i).get(0);
-            String name = results.get(i).get(1);
-            String hotelID = results.get(i).get(2);
-            String roomNumber = results.get(i).get(3);
-            String date = results.get(i).get(4);
-            System.out.println("The bookingID is " + bookingID);
-            System.out.println("The customer name is " + name);
-            System.out.println("The hotelID is " + hotelID);
-            System.out.println("The roomNumber is " + roomNumber);
-            System.out.println("The date is " + date + "\n");
+         if(isManagerForHotel(esql, auth_user)) {
+            System.out.println("Please enter the starting date of your range (M,D,YYYY): ");
+            String date1 = "'" + in.readLine() + "'";
+            System.out.println("Please enter the ending date of your range (M,D,YYYY): ");
+            String date2 = "'" + in.readLine() + "'";
+            String isManagerQuery = "SELECT RB.bookingID, U.name, RB.hotelID, RB.roomNumber, RB.bookingDate, H.managerUserID FROM RoomBookings RB, Users U, Hotel H WHERE managerUserID=" + auth_user + " AND H.hotelID = RB.hotelID AND RB.customerID = U.userID AND RB.bookingDate >= " + date1 + " AND RB.bookingDate <=" + date2;
+            List<List<String>> results = esql.executeQueryAndReturnResult(isManagerQuery);
+            for(int i = 0; i < results.size(); i++) {
+               String bookingID = results.get(i).get(0);
+               String name = results.get(i).get(1);
+               String hotelID = results.get(i).get(2);
+               String roomNumber = results.get(i).get(3);
+               String date = results.get(i).get(4);
+               System.out.println("The bookingID is " + bookingID);
+               System.out.println("The customer name is " + name);
+               System.out.println("The hotelID is " + hotelID);
+               System.out.println("The roomNumber is " + roomNumber);
+               System.out.println("The date is " + date + "\n");
+            }
          }
-         if(results.size() == 0) {
-            System.out.println("Sorry you are either not a manager, or are not managing any hotels");
-         }
+         else{
+               System.out.println("You are not a manager for any hotels!");
+            }
       }
       catch(Exception e){
          System.err.println (e.getMessage ());
       }
    }
-   public static void viewRegularCustomers(Hotel esql) {}
+   public static void viewRegularCustomers(Hotel esql, String auth_user) {
+      // Regular customer: This option is for the managers. If chosen, the
+      // system will ask for entering a hotelID. If the manager is managing
+      // that hotel, then the top 5 customers who made the most bookings
+      // in that hotel will be shown.
+      try{
+         if(isManagerForHotel(esql, auth_user)) {
+            Integer hotelID = inputInteger("Enter Hotel ID: ");
+            if(isManagerForHotel(esql, auth_user, hotelID)) {
+               String query = "SELECT U.name, COUNT(*) FROM RoomBookings RB, Users U, Hotel H WHERE U.userID = RB.customerID AND managerUserID=" + auth_user + " AND H.hotelID = RB.hotelID AND RB.customerID = U.userID GROUP BY U.name ORDER BY COUNT(*) DESC LIMIT 5";
+               List<List<String>> results = esql.executeQueryAndReturnResult(query);
+               int a = Math.min(results.size(), 5);
+               System.out.println("\nThe top 5 customers who made the most bookings:\n");
+               for(int i = 0; i < a; i++) {
+                  String customerID = results.get(i).get(0);
+                  String count = results.get(i).get(1);
+                  System.out.println(customerID + " " + count);
+               }
+               System.out.println("\n");
+            }
+            else{
+               System.out.println("You are not a manager for this hotel!");
+            }
+         }
+         else{
+               System.out.println("You are not a manager for any hotels!");
+         }
+      } 
+      catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }
    public static void placeRoomRepairRequests(Hotel esql, String auth_user) {
       try{
          System.out.print("\tEnter Hotel ID: ");
