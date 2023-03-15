@@ -472,12 +472,9 @@ public class Hotel {
    public static void viewRooms(Hotel esql) {
   	   try{
          System.out.print("\tEnter Hotel ID: ");
-         int HotelID = Integer.parseInt(in.readLine());
+         Integer HotelID = inputInteger("Hotel ID");
          System.out.print("\tEnter Date: ");
-         String date = "'";
-         date += in.readLine();
-         date += "'";
-
+         String date = "'" + in.readLine() + "'";
          String query = "SELECT R.roomNumber, R.price FROM Rooms R WHERE R.hotelID= " + HotelID + " AND roomNumber NOT IN (SELECT roomNumber FROM RoomBookings RB WHERE RB.hotelID=" + HotelID + " AND bookingDate=" + date + ")";
          List<List<String>> results = esql.executeQueryAndReturnResult(query);
          for(int i = 0; i < results.size(); i++){
@@ -497,9 +494,9 @@ public class Hotel {
    public static void bookRooms(Hotel esql, String auth_user) {
       try{
          System.out.print("\tEnter Hotel ID: ");
-         String hotelID = in.readLine();
+         Integer hotelID = inputInteger("Hotel ID");
          System.out.print("\tRoom number: ");
-         String roomNumber = in.readLine();
+         Integer roomNumber = inputInteger("room Number");
          System.out.print("\tEnter Date: ");
          String bookingDate = String.format("'%s'", in.readLine());
          String query = "SELECT R.price FROM Rooms R WHERE R.roomNumber=" + roomNumber + " AND R.hotelID= " + hotelID + " AND NOT EXISTS (SELECT * FROM RoomBookings RB WHERE RB.hotelID=" + hotelID + " AND R.hotelID=RB.hotelID AND R.roomNumber=RB.roomNumber AND RB.roomNumber="+ roomNumber +" AND bookingDate=" + bookingDate + ")";
@@ -545,18 +542,18 @@ public class Hotel {
    public static void updateRoomInfo(Hotel esql, String auth_user) {
       try{
          System.out.print("\tEnter Hotel ID: ");
-         String hotelID = in.readLine();
+         Integer hotelID = inputInteger("Hotel ID");
          System.out.print("\tRoom number: ");
-         String roomNumber = in.readLine();
+         Integer roomNumber = inputInteger("room Number");
          String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          String roomUpdateLogQuery = String.format("INSERT INTO RoomUpdatesLog (managerID, hotelID, roomNumber, updatedOn) VALUES (%s, %s, %s, CURRENT_TIMESTAMP)", auth_user, hotelID, roomNumber);
          if(result.size() > 0){
             System.out.println("\tWould you like to update the 'price' or the 'image url', enter something besides the options to exit: ");
-            String updateOption = in.readLine();
+            Integer updateOption = inputInteger("update Option");
             if(updateOption.equals("price")){
                System.out.println("\tNew price for room: ");
-               String newPrice = in.readLine();
+               Integer newPrice = inputInteger("new Price");
                String updatePriceQuery = String.format("UPDATE Rooms SET price=%s WHERE hotelID=%s AND roomNumber=%s", newPrice, hotelID, roomNumber);
                esql.executeUpdate(updatePriceQuery);
                esql.executeUpdate(roomUpdateLogQuery);
@@ -625,11 +622,11 @@ public class Hotel {
    public static void placeRoomRepairRequests(Hotel esql, String auth_user) {
       try{
          System.out.print("\tEnter Hotel ID: ");
-         String hotelID = in.readLine();
+         Integer hotelID = inputInteger("hotelID");
          System.out.print("\tRoom number: ");
-         String roomNumber = in.readLine();
+         Integer roomNumber = inputInteger("room Number");
          System.out.print("\tCompany ID of maintenance company: ");
-         String companyID = in.readLine();
+         Integer companyID = inputInteger("companyID");
          String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          if(result.size() > 0){
