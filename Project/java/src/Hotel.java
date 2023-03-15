@@ -239,8 +239,7 @@ public class Hotel {
     *
     * @param args the command line arguments this inclues the <mysql|pgsql> <login file>
     */
-
-   static String u = null;    
+  
    public static void main (String[] args) {
       if (args.length != 3) {
          System.err.println (
@@ -279,7 +278,6 @@ public class Hotel {
                default : System.out.println("Unrecognized choice!"); break;
             }//end switch
             if (authorisedUser != null) {
-              u = authorisedUser;
               boolean usermenu = true;
               while(usermenu) {
                 System.out.println("MAIN MENU");
@@ -303,7 +301,7 @@ public class Hotel {
                    case 1: viewHotels(esql); break;
                    case 2: viewRooms(esql); break;
                    case 3: bookRooms(esql, authorisedUser); break;
-                   case 4: viewRecentBookingsfromCustomer(esql); break;
+                   case 4: viewRecentBookingsfromCustomer(esql, authorisedUser); break;
                    case 5: updateRoomInfo(esql, authorisedUser); break;
                    case 6: viewRecentUpdates(esql); break;
                    case 7: viewBookingHistoryofHotel(esql); break;
@@ -480,9 +478,9 @@ public class Hotel {
          System.err.println (e.getMessage ());
       }
    }
-   public static void viewRecentBookingsfromCustomer(Hotel esql) {
+   public static void viewRecentBookingsfromCustomer(Hotel esql, String auth_user) {
    try{
-      String query = "SELECT RB.hotelID, RB.roomNumber, RB.bookingDate, R.price FROM RoomBookings RB, Rooms R WHERE customerID = " + u + " AND RB.roomNumber = R.roomNumber AND RB.hotelID = R.hotelID ORDER BY bookingDate DESC";
+      String query = "SELECT RB.hotelID, RB.roomNumber, RB.bookingDate, R.price FROM RoomBookings RB, Rooms R WHERE customerID = " + auth_user + " AND RB.roomNumber = R.roomNumber AND RB.hotelID = R.hotelID ORDER BY bookingDate DESC";
       List<List<String>> results = esql.executeQueryAndReturnResult(query);
       int a = Math.min(results.size(), 5);
       for(int i = 0; i < a; i++){
