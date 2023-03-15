@@ -239,6 +239,7 @@ public class Hotel {
     *
     * @param args the command line arguments this inclues the <mysql|pgsql> <login file>
     */
+  
    public static void main (String[] args) {
       if (args.length != 3) {
          System.err.println (
@@ -300,7 +301,7 @@ public class Hotel {
                    case 1: viewHotels(esql); break;
                    case 2: viewRooms(esql); break;
                    case 3: bookRooms(esql, authorisedUser); break;
-                   case 4: viewRecentBookingsfromCustomer(esql); break;
+                   case 4: viewRecentBookingsfromCustomer(esql, authorisedUser); break;
                    case 5: updateRoomInfo(esql, authorisedUser); break;
                    case 6: viewRecentUpdates(esql, authorisedUser); break;
                    case 7: viewBookingHistoryofHotel(esql); break;
@@ -432,7 +433,6 @@ public class Hotel {
 // Rest of the functions definition go in here
    public static void viewHotels(Hotel esql) {
       try{
-         // System.out.print("\tEnter your longitude and latitude to find hotels within 30 units of you");
          System.out.print("\tLongitude: ");
          Double user_longitude = Double.parseDouble(in.readLine());
          System.out.print("\tLatitude: ");
@@ -502,8 +502,28 @@ public class Hotel {
          System.err.println (e.getMessage ());
       }
    }
-   public static void viewRecentBookingsfromCustomer(Hotel esql) {
-      //selecting customerID from bookings, order by booking dates, and display top 5?
+   public static void viewRecentBookingsfromCustomer(Hotel esql, String auth_user) {
+   try{
+      String query = "SELECT RB.hotelID, RB.roomNumber, RB.bookingDate, R.price FROM RoomBookings RB, Rooms R WHERE customerID = " + auth_user + " AND RB.roomNumber = R.roomNumber AND RB.hotelID = R.hotelID ORDER BY bookingDate DESC";
+      List<List<String>> results = esql.executeQueryAndReturnResult(query);
+      int a = Math.min(results.size(), 5);
+      for(int i = 0; i < a; i++){
+         String hotelID = results.get(i).get(0);
+         String roomNumber = results.get(i).get(1);
+         String date = results.get(i).get(2);
+         String price = results.get(i).get(3);
+         System.out.println("The hotelID is " + hotelID);
+         System.out.println("The roomNumber is " + roomNumber);
+         System.out.println("The price is " + price);
+         System.out.println("The date is " + date + "\n");
+      }
+      if(results.size() == 0) {
+         System.out.println("Sorry you have no current booking history");
+      }
+   }
+   catch(Exception e){
+         System.err.println (e.getMessage ());
+   }
    }
    public static void updateRoomInfo(Hotel esql, String auth_user) {
       try{
