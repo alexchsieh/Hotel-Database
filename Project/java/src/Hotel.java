@@ -447,10 +447,8 @@ public class Hotel {
 // Rest of the functions definition go in here
    public static void viewHotels(Hotel esql) {
       try{
-         System.out.print("\tLongitude: ");
-         Double user_longitude = Double.parseDouble(in.readLine());
-         System.out.print("\tLatitude: ");
-         Double user_latitude = Double.parseDouble(in.readLine());
+         Integer user_longitude = inputInteger("Longitude");
+         Integer user_latitude = inputInteger("Latitude");
          String query = "SELECT hotelName, latitude, longitude FROM Hotel";
          List<List<String>> results = esql.executeQueryAndReturnResult(query);
          System.out.print("Hotels near you... \n");
