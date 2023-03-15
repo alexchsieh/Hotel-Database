@@ -584,6 +584,11 @@ public class Hotel {
    public static void viewRecentUpdates(Hotel esql) {}
    public static void viewBookingHistoryofHotel(Hotel esql, String auth_user) {
       try{
+         if(isManager){
+            String fiveRecentUpdatesQuery = String.format("SELECT hotelID, roomNumber FROM RoomUpdatesLog WHERE managerID=%s ORDER BY updatedOn DESC LIMIT 5", auth_user);
+            esql.executeQueryAndPrintResult(fiveRecentUpdatesQuery);
+         } else{
+            System.out.println("You are not a manager for any hotels!");
          System.out.println("Please enter the starting date of your range (M,D,YYYY): ");
          String date1 = "'" + in.readLine() + "'";
          System.out.println("Please enter the ending date of your range (M,D,YYYY): ");
