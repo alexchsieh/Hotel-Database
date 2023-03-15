@@ -408,7 +408,6 @@ public class Hotel {
 // Rest of the functions definition go in here
    public static void viewHotels(Hotel esql) {
       try{
-         // System.out.print("\tEnter your longitude and latitude to find hotels within 30 units of you");
          System.out.print("\tLongitude: ");
          Double user_longitude = Double.parseDouble(in.readLine());
          System.out.print("\tLatitude: ");
@@ -482,23 +481,18 @@ public class Hotel {
       }
    }
    public static void viewRecentBookingsfromCustomer(Hotel esql) {
-// Browse booking history: Customers will be able to see the last
-// 5 of their recent bookings from the RoomBookings table. They
-// will be able to see hotelID, roomNumber, billing information, and
-// date of booking. A customer is not allowed to see the booking
-// history of other customers.
    try{
-      String query = "SELECT * FROM RoomBookings RB WHERE customerID = " + u + " ORDER BY bookingDate DESC";
+      String query = "SELECT RB.hotelID, RB.roomNumber, RB.bookingDate, R.price FROM RoomBookings RB, Rooms R WHERE customerID = " + u + " AND RB.roomNumber = R.roomNumber AND RB.hotelID = R.hotelID ORDER BY bookingDate DESC";
       List<List<String>> results = esql.executeQueryAndReturnResult(query);
       int a = Math.min(results.size(), 5);
       for(int i = 0; i < a; i++){
-         String hotelID = results.get(i).get(2);
-         String roomNumber = results.get(i).get(3);
-         String billing = results.get(i).get(0);
-         String date = results.get(i).get(4);
+         String hotelID = results.get(i).get(0);
+         String roomNumber = results.get(i).get(1);
+         String date = results.get(i).get(2);
+         String price = results.get(i).get(3);
          System.out.println("The hotelID is " + hotelID);
          System.out.println("The roomNumber is " + roomNumber);
-         System.out.println("The billing information is " + billing);
+         System.out.println("The price is " + price);
          System.out.println("The date is " + date + "\n");
       }
       if(results.size() == 0) {
