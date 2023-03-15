@@ -417,6 +417,20 @@ public class Hotel {
       return isManager;
    }
 
+   public static boolean isManagerForHotel(Hotel esql, String auth_user){
+      boolean isManager = false;
+      try{
+         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE managerUserID=" + auth_user;
+         List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
+         if(result.size() > 0) isManager = true;
+      }
+      catch(Exception e){
+         System.err.println (e.getMessage ());
+         isManager = false;
+      }
+      return isManager;
+   }
+
    public static Integer inputInteger(String inputType){
       while(true){
          try{
@@ -563,15 +577,12 @@ public class Hotel {
    public static void viewRegularCustomers(Hotel esql) {}
    public static void placeRoomRepairRequests(Hotel esql, String auth_user) {
       try{
-         System.out.print("\tEnter Hotel ID: ");
-         String hotelID = in.readLine();
-         System.out.print("\tRoom number: ");
-         String roomNumber = in.readLine();
+         Integer hotelID = inputInteger("Hotel ID");
+         Integer roomNumber = inputInteger("Room Number");
          System.out.print("\tCompany ID of maintenance company: ");
          String companyID = in.readLine();
-         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
-         List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
-         if(result.size() > 0){
+         boolean isManager = isManagerForHotel(esql, auth_user, hotelID);
+         if(isManager){
             String addRoomRepairQuery = String.format("INSERT INTO RoomRepairs (companyID, hotelID, roomNumber, repairDate) VALUES (%s, %s, %s, CURRENT_DATE)", companyID, hotelID, roomNumber);
             esql.executeUpdate(addRoomRepairQuery);
             int newRepairID = esql.getNewUserID("SELECT last_value FROM roomRepairs_repairID_seq");
@@ -588,9 +599,8 @@ public class Hotel {
    }
    public static void viewRoomRepairHistory(Hotel esql, String auth_user) {
       try{
-         String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE managerUserID=" + auth_user;
-         List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
-         if(result.size() > 0){
+         boolean isManager = isManagerForHotel(esql, auth_user);
+         if(isManager){
             System.out.println("Manager Room Repair Request History");
             String roomRequestsHistoryQuery = String.format("SELECT companyID, hotelID, roomNumber, repairDate FROM RoomRepairs WHERE hotelID IN (SELECT hotelID FROM Hotel WHERE managerUserID=%s)", auth_user);
             esql.executeQueryAndPrintResult(roomRequestsHistoryQuery);
