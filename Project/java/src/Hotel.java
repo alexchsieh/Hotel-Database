@@ -239,6 +239,8 @@ public class Hotel {
     *
     * @param args the command line arguments this inclues the <mysql|pgsql> <login file>
     */
+
+   static String u = null;    
    public static void main (String[] args) {
       if (args.length != 3) {
          System.err.println (
@@ -277,6 +279,7 @@ public class Hotel {
                default : System.out.println("Unrecognized choice!"); break;
             }//end switch
             if (authorisedUser != null) {
+              u = authorisedUser;
               boolean usermenu = true;
               while(usermenu) {
                 System.out.println("MAIN MENU");
@@ -479,7 +482,32 @@ public class Hotel {
       }
    }
    public static void viewRecentBookingsfromCustomer(Hotel esql) {
-      //selecting customerID from bookings, order by booking dates, and display top 5?
+// Browse booking history: Customers will be able to see the last
+// 5 of their recent bookings from the RoomBookings table. They
+// will be able to see hotelID, roomNumber, billing information, and
+// date of booking. A customer is not allowed to see the booking
+// history of other customers.
+   try{
+      String query = "SELECT * FROM RoomBookings RB WHERE customerID = " + u + " ORDER BY bookingDate DESC";
+      List<List<String>> results = esql.executeQueryAndReturnResult(query);
+      int a = Math.min(results.size(), 5);
+      for(int i = 0; i < a; i++){
+         String hotelID = results.get(i).get(2);
+         String roomNumber = results.get(i).get(3);
+         String billing = results.get(i).get(0);
+         String date = results.get(i).get(4);
+         System.out.println("The hotelID is " + hotelID);
+         System.out.println("The roomNumber is " + roomNumber);
+         System.out.println("The billing information is " + billing);
+         System.out.println("The date is " + date + "\n");
+      }
+      if(results.size() == 0) {
+         System.out.println("Sorry you have no current booking history");
+      }
+   }
+   catch(Exception e){
+         System.err.println (e.getMessage ());
+   }
    }
    public static void updateRoomInfo(Hotel esql, String auth_user) {
       try{
