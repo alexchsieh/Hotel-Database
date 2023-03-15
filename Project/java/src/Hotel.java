@@ -304,7 +304,7 @@ public class Hotel {
                    case 4: viewRecentBookingsfromCustomer(esql, authorisedUser); break;
                    case 5: updateRoomInfo(esql, authorisedUser); break;
                    case 6: viewRecentUpdates(esql, authorisedUser); break;
-                   case 7: viewBookingHistoryofHotel(esql); break;
+                   case 7: viewBookingHistoryofHotel(esql, authorisedUser); break;
                    case 8: viewRegularCustomers(esql); break;
                    case 9: placeRoomRepairRequests(esql, authorisedUser); break;
                    case 10: viewRoomRepairHistory(esql, authorisedUser); break;
@@ -581,14 +581,20 @@ public class Hotel {
          System.err.println (e.getMessage ());
       }
    }
-   public static void viewRecentUpdates(Hotel esql) {}
+   public static void viewRecentUpdates(Hotel esql, String auth_user) {
+      try{
+         if(isManagerForHotel(esql, auth_user)){
+               String fiveRecentUpdatesQuery = String.format("SELECT hotelID, roomNumber FROM RoomUpdatesLog WHERE managerID=%s ORDER BY updatedOn DESC LIMIT 5", auth_user);
+               esql.executeQueryAndPrintResult(fiveRecentUpdatesQuery);
+            } else{
+               System.out.println("You are not a manager for any hotels!");
+            }
+      } catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }
    public static void viewBookingHistoryofHotel(Hotel esql, String auth_user) {
       try{
-         if(isManager){
-            String fiveRecentUpdatesQuery = String.format("SELECT hotelID, roomNumber FROM RoomUpdatesLog WHERE managerID=%s ORDER BY updatedOn DESC LIMIT 5", auth_user);
-            esql.executeQueryAndPrintResult(fiveRecentUpdatesQuery);
-         } else{
-            System.out.println("You are not a manager for any hotels!");
          System.out.println("Please enter the starting date of your range (M,D,YYYY): ");
          String date1 = "'" + in.readLine() + "'";
          System.out.println("Please enter the ending date of your range (M,D,YYYY): ");
