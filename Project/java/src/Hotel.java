@@ -471,19 +471,19 @@ public class Hotel {
 
    public static void viewRooms(Hotel esql) {
   	   try{
-         System.out.print("\tEnter Hotel ID: ");
          Integer HotelID = inputInteger("Hotel ID");
          System.out.print("\tEnter Date: ");
          String date = "'" + in.readLine() + "'";
-         String query = "SELECT R.roomNumber, R.price FROM Rooms R WHERE R.hotelID= " + HotelID + " AND roomNumber NOT IN (SELECT roomNumber FROM RoomBookings RB WHERE RB.hotelID=" + HotelID + " AND bookingDate=" + date + ")";
+         String query = "SELECT R.roomNumber, R.price, R.imageURL FROM Rooms R WHERE R.hotelID= " + HotelID + " AND roomNumber NOT IN (SELECT roomNumber FROM RoomBookings RB WHERE RB.hotelID=" + HotelID + " AND bookingDate=" + date + ")";
          List<List<String>> results = esql.executeQueryAndReturnResult(query);
          for(int i = 0; i < results.size(); i++){
             String roomNumber = results.get(i).get(0);
             String roomPrice = results.get(i).get(1);
-            System.out.println("The room " + roomNumber + " is available for " + roomPrice + " bells");
+            String imageURL = results.get(i).get(2);
+            System.out.println("The room " + roomNumber + " is available for " + roomPrice + " bells, image url: " + imageURL);
          }
          if(results.size()==0){
-            System.out.println("Sorry there are no rooms currently available for that booking date");
+            System.out.println("Sorry there are no rooms at the hotel currently available for that booking date");
          }
          System.out.print("\n");
       } 
@@ -493,9 +493,7 @@ public class Hotel {
    }
    public static void bookRooms(Hotel esql, String auth_user) {
       try{
-         System.out.print("\tEnter Hotel ID: ");
          Integer hotelID = inputInteger("Hotel ID");
-         System.out.print("\tRoom number: ");
          Integer roomNumber = inputInteger("room Number");
          System.out.print("\tEnter Date: ");
          String bookingDate = String.format("'%s'", in.readLine());
@@ -541,28 +539,25 @@ public class Hotel {
    }
    public static void updateRoomInfo(Hotel esql, String auth_user) {
       try{
-         System.out.print("\tEnter Hotel ID: ");
          Integer hotelID = inputInteger("Hotel ID");
-         System.out.print("\tRoom number: ");
-         Integer roomNumber = inputInteger("room Number");
+         Integer roomNumber = inputInteger("Room Number");
          String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          String roomUpdateLogQuery = String.format("INSERT INTO RoomUpdatesLog (managerID, hotelID, roomNumber, updatedOn) VALUES (%s, %s, %s, CURRENT_TIMESTAMP)", auth_user, hotelID, roomNumber);
          if(result.size() > 0){
-            System.out.println("\tWould you like to update the 'price' or the 'image url', enter something besides the options to exit: ");
-            Integer updateOption = inputInteger("update Option");
+            System.out.print("\tWould you like to update the 'price' or the 'image url', enter something besides the options to exit: ");
+            String updateOption = in.readLine();
             if(updateOption.equals("price")){
-               System.out.println("\tNew price for room: ");
-               Integer newPrice = inputInteger("new Price");
+               Integer newPrice = inputInteger("New Room Price");
                String updatePriceQuery = String.format("UPDATE Rooms SET price=%s WHERE hotelID=%s AND roomNumber=%s", newPrice, hotelID, roomNumber);
                esql.executeUpdate(updatePriceQuery);
                esql.executeUpdate(roomUpdateLogQuery);
                System.out.println("\tUpdated price");
             }
             else if(updateOption.equals("image url")){
-               System.out.println("\tNew image url for room: ");
+               System.out.print("\tNew image url for room: ");
                String newImageUrl = in.readLine();
-               String updateImageUrlQuery = String.format("UPDATE Rooms SET price=%s WHERE hotelID=%s AND roomNumber=%s", newImageUrl, hotelID, roomNumber);
+               String updateImageUrlQuery = String.format("UPDATE Rooms SET imageURL='%s' WHERE hotelID=%s AND roomNumber=%s", newImageUrl, hotelID, roomNumber);
                esql.executeUpdate(updateImageUrlQuery);
                esql.executeUpdate(roomUpdateLogQuery);
                System.out.println("\tUpdated Image Url");
@@ -611,6 +606,10 @@ public class Hotel {
                System.out.println("The roomNumber is " + roomNumber);
                System.out.println("The date is " + date + "\n");
             }
+            if(results.size() == 0){
+               System.out.println("No bookings between those time spans :'(");
+            }
+
          }
          else{
                System.out.println("You are not a manager for any hotels!");
@@ -654,12 +653,9 @@ public class Hotel {
    }
    public static void placeRoomRepairRequests(Hotel esql, String auth_user) {
       try{
-         System.out.print("\tEnter Hotel ID: ");
-         Integer hotelID = inputInteger("hotelID");
-         System.out.print("\tRoom number: ");
-         Integer roomNumber = inputInteger("room Number");
-         System.out.print("\tCompany ID of maintenance company: ");
-         Integer companyID = inputInteger("companyID");
+         Integer hotelID = inputInteger("Hotel ID");
+         Integer roomNumber = inputInteger("Room Number");
+         Integer companyID = inputInteger("Company ID of maintenance company");
          String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          if(result.size() > 0){
