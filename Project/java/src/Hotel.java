@@ -471,7 +471,7 @@ public class Hotel {
 
    public static void viewRooms(Hotel esql) {
   	   try{
-         Integer HotelID = inputInteger("Hotel ID");
+         Integer HotelID = inputInteger("Enter Hotel ID");
          System.out.print("\tEnter Date: ");
          String date = "'" + in.readLine() + "'";
          String query = "SELECT R.roomNumber, R.price, R.imageURL FROM Rooms R WHERE R.hotelID= " + HotelID + " AND roomNumber NOT IN (SELECT roomNumber FROM RoomBookings RB WHERE RB.hotelID=" + HotelID + " AND bookingDate=" + date + ")";
@@ -493,8 +493,8 @@ public class Hotel {
    }
    public static void bookRooms(Hotel esql, String auth_user) {
       try{
-         Integer hotelID = inputInteger("Hotel ID");
-         Integer roomNumber = inputInteger("room Number");
+         Integer hotelID = inputInteger("Enter Hotel ID");
+         Integer roomNumber = inputInteger("Enter Room Number");
          System.out.print("\tEnter Date: ");
          String bookingDate = String.format("'%s'", in.readLine());
          String query = "SELECT R.price FROM Rooms R WHERE R.roomNumber=" + roomNumber + " AND R.hotelID= " + hotelID + " AND NOT EXISTS (SELECT * FROM RoomBookings RB WHERE RB.hotelID=" + hotelID + " AND R.hotelID=RB.hotelID AND R.roomNumber=RB.roomNumber AND RB.roomNumber="+ roomNumber +" AND bookingDate=" + bookingDate + ")";
@@ -539,8 +539,8 @@ public class Hotel {
    }
    public static void updateRoomInfo(Hotel esql, String auth_user) {
       try{
-         Integer hotelID = inputInteger("Hotel ID");
-         Integer roomNumber = inputInteger("Room Number");
+         Integer hotelID = inputInteger("Enter Hotel ID");
+         Integer roomNumber = inputInteger("Enter Room Number");
          String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          String roomUpdateLogQuery = String.format("INSERT INTO RoomUpdatesLog (managerID, hotelID, roomNumber, updatedOn) VALUES (%s, %s, %s, CURRENT_TIMESTAMP)", auth_user, hotelID, roomNumber);
@@ -548,7 +548,7 @@ public class Hotel {
             System.out.print("\tWould you like to update the 'price' or the 'image url', enter something besides the options to exit: ");
             String updateOption = in.readLine();
             if(updateOption.equals("price")){
-               Integer newPrice = inputInteger("New Room Price");
+               Integer newPrice = inputInteger("Enter New Room Price");
                String updatePriceQuery = String.format("UPDATE Rooms SET price=%s WHERE hotelID=%s AND roomNumber=%s", newPrice, hotelID, roomNumber);
                esql.executeUpdate(updatePriceQuery);
                esql.executeUpdate(roomUpdateLogQuery);
@@ -626,7 +626,7 @@ public class Hotel {
       // in that hotel will be shown.
       try{
          if(isManagerForHotel(esql, auth_user)) {
-            Integer hotelID = inputInteger("Enter Hotel ID: ");
+            Integer hotelID = inputInteger("Enter Hotel ID");
             if(isManagerForHotel(esql, auth_user, hotelID)) {
                String query = "SELECT U.name, COUNT(*) FROM RoomBookings RB, Users U, Hotel H WHERE U.userID = RB.customerID AND managerUserID=" + auth_user + " AND H.hotelID = RB.hotelID AND RB.customerID = U.userID GROUP BY U.name ORDER BY COUNT(*) DESC LIMIT 5";
                List<List<String>> results = esql.executeQueryAndReturnResult(query);
@@ -653,9 +653,9 @@ public class Hotel {
    }
    public static void placeRoomRepairRequests(Hotel esql, String auth_user) {
       try{
-         Integer hotelID = inputInteger("Hotel ID");
-         Integer roomNumber = inputInteger("Room Number");
-         Integer companyID = inputInteger("Company ID of maintenance company");
+         Integer hotelID = inputInteger("Enter Hotel ID");
+         Integer roomNumber = inputInteger("Enter Room Number");
+         Integer companyID = inputInteger("Enter Company ID of maintenance company");
          String isManagerQuery = "SELECT managerUserID FROM Hotel WHERE hotelID=" + hotelID + " AND managerUserID=" + auth_user;
          List<List<String>> result = esql.executeQueryAndReturnResult(isManagerQuery);
          if(result.size() > 0){
