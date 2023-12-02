@@ -1,1 +1,1 @@
-# CS166
+# Hotel Database, using SQL
