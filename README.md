@@ -1,5 +1,5 @@
 # Hotel Database
-Implemented a simple hotel database where you can do simple querying operations as an administive user or guest
+Implemented a simple hotel database where you can do simple querying operations as an administrative user or guest.
 
 ## Installation
 
